@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LeetCode Helper</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        form {
+            background: #f4f4f4;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 8px;
+            margin: 5px 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px 15px;
+        }
+        .step {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-left: 3px solid #007bff;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>LeetCode Problem Helper</h1>
+    
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <label for="title">Problem Title:</label>
+            <input type="text" id="title" name="title" required 
+                   value="{{ title|default:'' }}">
+        </div>
+        <div>
+            <label for="url">Problem URL:</label>
+            <input type="url" id="url" name="url" required
+                   value="{{ url|default:'' }}">
+        </div>
+        <button type="submit">Get Help</button>
+    </form>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if success and steps %}
+        <h2>Solution Approach for: {{ title }}</h2>
+        <div id="steps">
+            {% for step in steps %}
+                <div class="step">{{ step|linebreaks }}</div>
+            {% endfor %}
+        </div>
+        
+        <button onclick="copySteps()" style="margin-top: 20px;">
+            Copy All Steps
+        </button>
+        
+        <script>
+            function copySteps() {
+                const steps = document.querySelectorAll('.step');
+                let textToCopy = '';
+                steps.forEach(step => {
+                    textToCopy += step.textContent + '\n\n';
+                });
+                
+                navigator.clipboard.writeText(textToCopy.trim())
+                    .then(() => {
+                        alert('Steps copied to clipboard!');
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy: ', err);
+                    });
+            }
+        </script>
+    {% endif %}
+</body>
+</html>
